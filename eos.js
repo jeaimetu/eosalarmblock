@@ -60,6 +60,8 @@ function saveData(block, account, data, type){
 					//insert data
 					var fData = formatData(data, type);
 					//query all chat ids related to this
+					if(result[i] === undefined)
+						continue;
 					var myobj = { chatid : result[i].chatid, block : block, account : account, data : fData, report : false };
 					dbo.collection("alarm").insertOne(myobj, function(err, res){
 						if (err) throw err;
@@ -80,17 +82,18 @@ function checkAccount(result){
  }else{
  	if(chainLogging == true)
   		console.log("transaction length ", result.transactions.length);
-	if(result.transactions == undefined || result.transactions.length == 0)
+	if(result.transactions === undefined || result.transactions.length == 0){
 		return;
+	}
   	for(i = 0;i<result.transactions.length;i++){
   	//check transaction type
   		var trx = result.transactions[i].trx.transaction;
-		if(trx.actions == null || trx.actions.length == 0)
-			return;
+		if(trx.actions === null || trx.actions.length == 0 || trx.actions === undefined)
+			continue;
    		for(j=0;j<trx.actions.length;j++){
     			if(chainLogging == true)
     				console.log("action length", trx.actions.length);
-    			if(trx.actions[j] ==  undefined || trx.actions[j].length == 0)
+    			if(trx.actions[j] ===  undefined || trx.actions[j].length == 0)
      				continue;    
   				var type = trx.actions[j].name;
   				var data = trx.actions[j].data; 
@@ -218,7 +221,7 @@ function formatData(data, type){
    msg = "You sell RAM";
    msg += "\n";
    msg += "Amount " + data.bytes;
-  }else if(type == "buyram"){
+  }else if(type == "buyram" || type == "buyrambytes"){
    msg = "You buy RAM";
    msg += "\n";
    msg += "Amount " + data.quant + " to " + data.receiver;
