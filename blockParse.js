@@ -1,4 +1,6 @@
 function getAccountInfo(data){
+ 
+ console.log("getAccountInfo", data);
  let account = null;
  
  if(data.hasOwnProperty(to))
