@@ -74,7 +74,7 @@ function saveData(block, account, data, type){
  
 function checkAccount(result){
    //idx++;
-	console.log("checkAccount, Result);
+	console.log("checkAccount", Result);
  if(result.transactions.length == 0){
  	return;
  }else{
