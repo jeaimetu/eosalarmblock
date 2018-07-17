@@ -5,7 +5,7 @@ var MongoClient = require('mongodb').MongoClient;
 var url = process.env.MONGODB_URI;
 
 const chainLogging = false;
-const runTimer = 350;
+const runTimer = 200;
 
 // EOS
 EosApi = require('eosjs-api')
@@ -16,14 +16,14 @@ eosconfig = {
 eos = EosApi(eosconfig)
 
 // Getting starting block id
-//var idx = 0;
+var isFirstRun = true;
+
 var previousReadBlock = -1;
 
 //set initial block
 function getLatestBlock(){
  eos.getInfo({}).then(result => {
-  startIndex = result.head_block_num;
-
+  	startIndex = result.head_block_num;
   if(chainLogging == true)
    console.log("getinfo block", previousReadBlock);
   if(previousReadBlock <  startIndex){
@@ -31,10 +31,10 @@ function getLatestBlock(){
    //read block
     console.log("Memory heap usage ", process.memoryUsage().heapTotal/(1024*1024));
  	console.log("Memory rss usage ", process.memoryUsage().rss/(1024*1024));
-   console.log("callong saveBlockInfo for block number", startIndex);
+   console.log("calling saveBlockInfo for block number", startIndex);
    saveBlockInfo(startIndex);
   }else{
-   setTimeout(getLatestBlock, runTimer);
+
    if(chainLogging == true)
     console.log("Do nothing", "previousReadBlock", "startIndex", "idx",previousReadBlock,startIndex) ;//do nothing
   }
@@ -54,6 +54,7 @@ function saveData(block, account, data, type){
 		dbo.collection("customers").find(findquery).toArray(function(err, result){
 			if(result == null){
 				console.log("there is no matched one ", account);
+				  
 				db.close();
 			}else{
 				for(i = 0;i < result.length;i++){
@@ -66,6 +67,7 @@ function saveData(block, account, data, type){
 					dbo.collection("alarm").insertOne(myobj, function(err, res){
 						if (err) throw err;
 							console.log("one document inserted to alarm db ", account);
+						  
 						db.close();
 					});
 				}
@@ -76,27 +78,34 @@ function saveData(block, account, data, type){
  
 function checkAccount(result){
    //idx++;
-	console.log("checkAccount", result);
- if(result.transactions.length == 0){
+	if(chainLogging == true)
+		console.log("checkAccount", result);
+ if(result.transactions.length == 0){	
  	return;
  }else{
  	if(chainLogging == true)
   		console.log("transaction length ", result.transactions.length);
-	if(result.transactions === undefined || result.transactions.length == 0){
+	if(result.transactions === undefined || result.transactions.length == 0){		
 		return;
 	}
+
+
   	for(i = 0;i<result.transactions.length;i++){
   	//check transaction type
   		var trx = result.transactions[i].trx.transaction;
+		if(trx === undefined)
+			continue;
 		if(trx.actions === null || trx.actions.length == 0 || trx.actions === undefined)
 			continue;
    		for(j=0;j<trx.actions.length;j++){
+
     			if(chainLogging == true)
     				console.log("action length", trx.actions.length);
     			if(trx.actions[j] ===  undefined || trx.actions[j].length == 0)
      				continue;    
-  				var type = trx.actions[j].name;
-  				var data = trx.actions[j].data; 
+			
+  			var type = trx.actions[j].name;
+  			var data = trx.actions[j].data; 
       			//filtering malicious event
       			if(type == "ddos" || type == "tweet")
        				continue;
@@ -129,7 +138,10 @@ function checkAccount(result){
    					//console.log("calling sendalarm in eosjs", account);
    					saveData(result.block_num, account, data, type);
    					account = null;
- 			  	}//end of if
+					daveDataCalled = true;
+ 			  	}else{
+					
+				}//end of if
    			}//end of for, actions
  	}//end of for of transaction
  }//end of else 
@@ -137,17 +149,17 @@ function checkAccount(result){
 
 
  
-function saveBlockInfo(idx){
+function saveBlockInfo(blockNo){
  //console.log("saveBlockInfo for ",idx);
- eos.getBlock(idx).then(result => {
+ eos.getBlock(blockNo).then(result => {
   retryCount = 0;
   if(chainLogging == true)
-   console.log("read block suceess for block number", idx);
+   console.log("read block suceess for block number", blockNo);
   checkAccount(result);
   //saving the latest success block number.
-  previousReadBlock = idx;
-  idx++;
-  setTimeout(getLatestBlock, runTimer);
+  previousReadBlock = blockNo;
+  //idx++;
+
   })
  .catch((err) => {
 
@@ -155,7 +167,7 @@ function saveBlockInfo(idx){
    console.log("getblockfailed");
 
   console.log(err);
-  setTimeout(getLatestBlock, runTimer);
+
  }); // end of getblock
 } //end of function
 
