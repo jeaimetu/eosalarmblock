@@ -286,7 +286,7 @@ function deleteReportedAlarm(){
 	});	
 }
                         
-setTimeout(getLatestBlock, runTimer);
+setInterval(getLatestBlock, runTimer);
 setInterval(deleteReportedAlarm, 3600000); //per an hour, delete reported alarm
 
 
