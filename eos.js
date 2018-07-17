@@ -10,7 +10,8 @@ const runTimer = 200;
 // EOS
 EosApi = require('eosjs-api')
 eosconfig = {
- httpEndpoint: "https://mainnet.eoscalgary.io"
+ 	httpEndpoint: "https://mainnet.eoscalgary.io",
+	expireInSeconds: 60	
 }
 
 eos = EosApi(eosconfig)
@@ -19,6 +20,14 @@ eos = EosApi(eosconfig)
 var isFirstRun = true;
 
 var previousReadBlock = -1;
+
+function forceGC(){
+   if (global.gc) {
+      global.gc();
+   } else {
+      console.warn('No GC hook! Start your program as `node --expose-gc file.js`.');
+   }
+}
 
 //set initial block
 function getLatestBlock(){
@@ -38,6 +47,12 @@ function getLatestBlock(){
    if(chainLogging == true)
     console.log("Do nothing", "previousReadBlock", "startIndex", "idx",previousReadBlock,startIndex) ;//do nothing
   }
+ }).catch((err) => {
+
+  if(chainLogging == true)
+   console.log("getInfo failed");
+  console.log(err);
+
  });
 }
 
@@ -47,7 +62,7 @@ function saveData(block, account, data, type){
   //botClient.sendAlarm(account, fData);
  /* Temporary disable saving data to MongoDB due to the size limit
  after find one and if available then save */
-	console.log("calling saveData for account");
+	console.log("calling saveData for account", account);
 	MongoClient.connect(url, function(err, db) {
 		var dbo = db.db("heroku_dtfpf2m1");
 		var findquery = {eosid : account};
@@ -89,14 +104,16 @@ function checkAccount(result){
 		return;
 	}
 
-
+	var trx;
   	for(i = 0;i<result.transactions.length;i++){
   	//check transaction type
-  		var trx = result.transactions[i].trx.transaction;
+  		trx = result.transactions[i].trx.transaction;
 		if(trx === undefined)
 			continue;
 		if(trx.actions === null || trx.actions.length == 0 || trx.actions === undefined)
 			continue;
+		
+		var type, data;
    		for(j=0;j<trx.actions.length;j++){
 
     			if(chainLogging == true)
@@ -104,8 +121,8 @@ function checkAccount(result){
     			if(trx.actions[j] ===  undefined || trx.actions[j].length == 0)
      				continue;    
 			
-  			var type = trx.actions[j].name;
-  			var data = trx.actions[j].data; 
+  			type = trx.actions[j].name;
+  			data = trx.actions[j].data; 
       			//filtering malicious event
       			if(type == "ddos" || type == "tweet")
        				continue;
@@ -266,5 +283,6 @@ function deleteReportedAlarm(){
                         
 setTimeout(getLatestBlock, runTimer);
 setInterval(deleteReportedAlarm, 3600000); //per an hour, delete reported alarm
+setInterval(forceGC, 1000*60);
 
 
