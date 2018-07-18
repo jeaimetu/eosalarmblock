@@ -133,8 +133,10 @@ function checkAccount(result){
       			if(type == "ddos" || type == "tweet")
        				continue;
   				var account = null;
+			var accountFrom = null;
   				if(type == "transfer" || type == "issue" ){
   					account = data.to;
+					accountFrom = data.from;
   				}else if(type == "newaccount"){
   					account = data.creator;
   				}else if(type == "voteproducer"){
@@ -160,8 +162,10 @@ function checkAccount(result){
   				if(account != null && type != "ddos" && type != "tweet"){     
    					//console.log("calling sendalarm in eosjs", account);
    					saveData(result.block_num, account, data, type);
-   					account = null;
-					daveDataCalled = true;
+					account = null;
+					if(accountFrom != null){
+						saveData(result.block_num, accountFrom, data, type);
+					}
  			  	}else{
 					
 				}//end of if
@@ -196,84 +200,80 @@ function saveBlockInfo(blockNo){
 
 function formatData(data, type){
   if(type == "transfer"){
-   msg = "Transfer Event";
+   msg = "송금 이벤트";
    msg += "\n";
-   msg += "To : " + data.to;
+   msg += "받는사람 : " + data.to;
    msg += "\n";
-   msg += "From : " + data.from;
+   msg += "보내는사람 : " + data.from;
    msg += "\n";
-   msg += "Transfer Amount : " + data.quantity;
+   msg += "송금 수량 : " + data.quantity;
    msg += "\n";
-   msg += "Memo : " + data.memo
+   msg += "메모 : " + data.memo
   }else if(type == "newaccount"){
-   msg = "New Account Event";
+   msg = "신규 계정 생성 이벤트";
    msg += "\n";
-   msg += "Created Account : " + data.name;
+   msg += "생성한 계정 : " + data.name;
   }else if(type == "voteproducer"){
-   msg = "Voting Event";
+   msg = "투표 이벤트";
    msg += "\n";
-   msg += "Voted to"
+   msg += "투표한 대상"
    msg += "\n";
    for(i = 0;i < data.producers.length;i++){
     msg += data.producers[i] + ", ";
    }
   }else if(type == "undelegatebw"){
-   msg = "EOS Unstake Event";
+   msg = "EOS 잠금 해제 이벤트";
    msg += "\n";
-   msg += "Unstaked for Network : " + data.unstake_net_quantity
+   msg += "네트워크 잠금 해제 : " + data.unstake_net_quantity
    msg += "\n";
-   msg += "Unstaked for CPU : " + data.unstake_cpu_quantity
+   msg += "CPU 잠금 해제 : " + data.unstake_cpu_quantity
    
   }else if(type == "delegatebw"){
-   msg = "EOS Staking Event";
+   msg = "EOS 잠금 이벤트";
    msg += "\n";
-   msg += "Staked for Network : " + data.stake_net_quantity
+   msg += "네트워크에 잠금 : " + data.stake_net_quantity
    msg += "\n";
-   msg += "Staked for CPU : " + data.stake_cpu_quantity
+   msg += "CPU에 잠금 : " + data.stake_cpu_quantity
   }else if(type == "issue"){
-   msg = "Issue Event";
+   msg = "이슈 이벤트";
    msg += "\n";
-   msg += "Quantity" + data.quantity;
-   msg += "Memo : " + data.memo
+   msg += "수량" + data.quantity;
+   msg += "메모 : " + data.memo
   }else if(type == "bidname"){
-   msg = "Account Bidding Event";
+   msg = "계정 경매 이벤트";
    msg += "\n";
-   msg += "Account : " + data.newname   
+   msg += "계정 : " + data.newname   
    msg += "\n";
-   msg += "Bidding Amount : " + data.bid
+   msg += "경매 참여 수량 : " + data.bid
   }else if(type == "awakepet"){
-   msg = "You waken PET";
+   msg = "펫을 깨우셨습니다.";
   }else if(type == "createpet"){
-   msg = "You created PET ";
+   msg = "펫을 만드셨습니다. ";
    msg += data.pet_name;   
   }else if(type == "refund"){
-   msg = "Refund Event";
+   msg = "환불 이벤트";
   }else if(type == "updateauth"){
-   msg = "Your Authority Updated";
+   msg = "당신의 권한 정보가 갱신되었습니다.";
    msg += "\n";
    msg += "Public Key " + data.auth.keys[0].key;
   }else if(type == "sellram"){
-   msg = "You sell RAM";
+   msg = "램을 파셨습니다.";
    msg += "\n";
-   msg += "Amount " + data.bytes;
+   msg += "수량 " + data.bytes;
   }else if(type == "buyram" || type == "buyrambytes"){
-   msg = "You buy RAM";
+   msg = "램을 구매했습니다.";
    msg += "\n";
-   msg += "Amount " + data.quant + " to " + data.receiver;
+   msg += "수량 " + data.bytes + "bytes" + " to " + data.receiver;
   }else{
    //console.log("need to be implemented");
-   msg = "This event will be supported in near future";
+   msg = "이 이벤트는 곧 더 예쁜 포멧으로 지원 예정입니다.";
    msg += "\n";
-   msg += "Event type : " + type;
+   msg += "이벤트 종류 : " + type;
    msg += "\n";
    //json object to stringfy
    var buf = Buffer.from(JSON.stringify(data));
    msg += buf;
   }
- 
- return msg;
- 
-}
 
 function deleteReportedAlarm(){
 	MongoClient.connect(url, function(err, db) {
