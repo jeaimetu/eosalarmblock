@@ -220,7 +220,6 @@ function formatData(data, type){
    msg += "\n";
    for(i = 0;i < data.producers.length;i++){
     msg += data.producers[i] + ", ";
-   }
   }else if(type == "undelegatebw"){
    msg = "EOS 잠금 해제 이벤트";
    msg += "\n";
@@ -237,7 +236,8 @@ function formatData(data, type){
   }else if(type == "issue"){
    msg = "이슈 이벤트";
    msg += "\n";
-   msg += "수량" + data.quantity;
+   msg += "수량 :" + data.quantity;
+	  msg += "\n";
    msg += "메모 : " + data.memo
   }else if(type == "bidname"){
    msg = "계정 경매 이벤트";
