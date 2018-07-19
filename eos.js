@@ -216,7 +216,7 @@ function formatData(data, type){
   }else if(type == "voteproducer"){
    msg = "투표 이벤트";
    msg += "\n";
-   msg += "투표한 대상"
+   msg += "투표한 대상";
    msg += "\n";
    for(i = 0;i < data.producers.length;i++){
     msg += data.producers[i] + ", ";
@@ -239,7 +239,7 @@ function formatData(data, type){
    msg += "\n";
    msg += "수량 : " + data.quantity;
 	  msg += "\n";
-   msg += "메모 : " + data.memo
+   msg += "메모 : " + data.memo;
   }else if(type == "bidname"){
    msg = "계정 경매 이벤트";
    msg += "\n";
