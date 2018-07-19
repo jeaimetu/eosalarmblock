@@ -275,6 +275,7 @@ function formatData(data, type){
    var buf = Buffer.from(JSON.stringify(data));
    msg += buf;
   }
+}
 
 function deleteReportedAlarm(){
 	MongoClient.connect(url, function(err, db) {
