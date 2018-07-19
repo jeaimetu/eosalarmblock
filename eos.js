@@ -275,6 +275,9 @@ function formatData(data, type){
    var buf = Buffer.from(JSON.stringify(data));
    msg += buf;
   }
+	
+	return msg;
+	
 }
 
 function deleteReportedAlarm(){
