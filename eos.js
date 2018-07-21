@@ -69,7 +69,7 @@ function saveData(block, account, data, type){
 	console.log("calling saveData for account", account);
 	forceGC();
 	MongoClient.connect(url, function(err, db) {
-		var dbo = db.db("heroku_dtfpf2m1");
+		var dbo = db.db("heroku_6wpccsrg");
 		var findquery = {eosid : account};
 		dbo.collection("customers").find(findquery).toArray(function(err, result){
 			if(result == null){
@@ -282,7 +282,7 @@ function formatData(data, type){
 
 function deleteReportedAlarm(){
 	MongoClient.connect(url, function(err, db) {
-		var dbo = db.db("heroku_dtfpf2m1");
+		var dbo = db.db("heroku_6wpccsrg");
 		var findquery = {report  : true};
 		dbo.collection("alarm").deleteMany(findquery, function(err, obj) {
 			if (err) throw err;
