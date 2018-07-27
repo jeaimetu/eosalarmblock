@@ -81,8 +81,11 @@ function saveData(block, account, data, type){
 					//insert data
 					var fData = formatData(data, type);
 					//query all chat ids related to this
-					if(result[i] === undefined)
+					if(result[i] === undefined){
+						console.log("result is undefined", result[i]);
 						continue;
+					}
+					console.log("calling insertone", account);
 					var myobj = { chatid : result[i].chatid, block : block, account : account, data : fData, report : false };
 					dbo.collection("alarm").insertOne(myobj, function(err, res){
 						if (err) throw err;
