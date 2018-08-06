@@ -277,7 +277,7 @@ function formatData(data, type){
    //json object to stringfy
    var buf = Buffer.from(JSON.stringify(data));
 	  //remove ", {}, replace , to newline
-	  buf = buf.replace(/"|/{|/}/g,"");
+	  buf = buf.replace(/"|{|}/g,"");
 	  buf = buf.replace(/,/g,"\n");
 	  
    msg += buf;
