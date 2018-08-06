@@ -275,10 +275,8 @@ function formatData(data, type){
    msg += "이벤트 종류 : " + type;
    msg += "\n";
    //json object to stringfy
-	  	  Buffer = Buffer.replace(/"|{|}/g,"");
-	  Buffer = Buffer.replace(/,/g,"\n");
    var buf = Buffer.from(JSON.stringify(data));
-	  //remove ", {}, replace , to newline
+
 
 	  
    msg += buf;
