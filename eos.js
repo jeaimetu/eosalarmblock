@@ -83,8 +83,9 @@ function saveData(block, account, data, type){
 					//query all chat ids related to this
 					if(typeof  result === 'undefined'){
 						console.log("result is undefined", result);
-						continue;
-					}
+						db.close();
+
+					}else{
 					console.log("calling insertone", account);
 					var myobj = { chatid : result.chatid, block : block, account : account, data : fData, report : false };
 					dbo.collection("alarm").insertOne(myobj, function(err, res){
@@ -93,6 +94,7 @@ function saveData(block, account, data, type){
 						  
 						db.close();
 					});
+					}
 				//}
 				db.close();//all continue case;
 			}
