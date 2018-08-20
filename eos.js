@@ -61,7 +61,8 @@ function getLatestBlock(){
 }
 
 
-function insertAlarm(result, account, block, data, type){
+function insertAlarm(res, account, block, data, type){
+	let result = res.slice();
 	MongoClient.connect(url, function(err, db) {
 		if(result == null){
 			console.log("there is no matched one ", account);
@@ -73,7 +74,7 @@ function insertAlarm(result, account, block, data, type){
 			console.log("before enter for loop", result[0], result);
 			for(i = 0;i < result.length;i++){
 				var fData = formatData(data, type);
-				if(result[i] === undefined){
+				if(type result[i] === "undefined"){
 					console.log("result is undefined", result[i], account);
 					continue;
 				}else{
