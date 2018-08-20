@@ -72,10 +72,11 @@ function insertAlarm(res, account, block, data, type){
 			var dbo = db.db("heroku_6wpccsrg");
 			console.log("before enter for loop", result, result.length);
 			console.log("before enter for loop", result[0], result, account);
-			for(i = 0;i < result.length;i++){
-				console.log("after enter for loop", result[i], result, account);
+			for(i=0 ; i < result.length ; i++){
+				console.log("for loop index : ", i);
+				console.log("after enter for loop", result[i], result, account,i);
 				let fData = formatData(data, type);
-				console.log("after calling formatData", result[i], result, account);
+				console.log("after calling formatData", result[i], result, account,i);
 				if(result[i] !== undefined){
 					console.log("calling insertone", account,result[i],i);
 					var myobj = { chatid : result[i].chatid, block : block, account : account, data : fData,
