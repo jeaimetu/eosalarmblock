@@ -103,7 +103,6 @@ function saveData(block, account, data, type){
 			if(err) throw err;
 			insertAlarm(result, account, block, data, type);
 			db.close();//all continue case;
-			}
 		});
 	}); 
 }
