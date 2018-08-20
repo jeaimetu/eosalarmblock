@@ -5,7 +5,7 @@ var MongoClient = require('mongodb').MongoClient;
 var url = process.env.MONGODB_URI;
 
 const chainLogging = true;
-const runTimer = 200;
+const runTimer = 400;
 
 // EOS
 EosApi = require('eosjs-api')
@@ -20,6 +20,7 @@ eos = EosApi(eosconfig)
 var isFirstRun = true;
 
 var previousReadBlock = -1;
+var processingBlock = -1;
 
 function forceGC(){
    if (global.gc) {
@@ -45,7 +46,10 @@ function getLatestBlock(){
    //read block
 
    console.log("calling saveBlockInfo for block number", startIndex);
-   saveBlockInfo(startIndex);
+	  if(processingBlock != startIndex){
+   		saveBlockInfo(startIndex);
+		processingBlock = startIndex;
+	  }
   }else{
 
    if(chainLogging == true)
