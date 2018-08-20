@@ -61,6 +61,34 @@ function getLatestBlock(){
 }
 
 
+function insertAlarm(result, account, block, data, type){
+	MongoClient.connect(url, function(err, db) {
+		if(result == null){
+			console.log("there is no matched one ", account);
+			db.close();
+			return;
+		}else{
+			var dbo = db.db("heroku_6wpccsrg");
+			console.log("before enter for loop", result);
+			for(i = 0;i < result.length;i++){
+				var fData = formatData(data, type);
+				if(typeof  result[i] === 'undefined'){
+					console.log("result is undefined", result[i], account);
+					continue;
+				}else{
+					console.log("calling insertone", account);
+					var myobj = { chatid : result[i].chatid, block : block, account : account, data : fData, report : false };
+					dbo.collection("alarm").insertOne(myobj, function(err, res){
+						if (err) throw err;
+						console.log("one document inserted to alarm db ", account);
+						db.close();
+					});					
+				}
+			}
+					
+		}
+	});	
+}
 function saveData(block, account, data, type){ 
   //var fData = formatData(data, type);
   //botClient.sendAlarm(account, fData);
@@ -72,33 +100,9 @@ function saveData(block, account, data, type){
 		var dbo = db.db("heroku_6wpccsrg");
 		var findquery = {eosid : account};
 		dbo.collection("customers").find(findquery).toArray(function(err, result){
-			if(result == null){
-				console.log("there is no matched one ", account);
-				  
-				db.close();
-			}else{
-				console.log("before enter for loop", result);
-				for(i = 0;i < result.length;i++){
-					//insert data
-					var fData = formatData(data, type);
-					//query all chat ids related to this
-					if(typeof  result[i] === 'undefined'){
-						console.log("result is undefined", result[i], account);
-						continue;
-						db.close();
-
-					}else{
-					console.log("calling insertone", account);
-					var myobj = { chatid : result[i].chatid, block : block, account : account, data : fData, report : false };
-					dbo.collection("alarm").insertOne(myobj, function(err, res){
-						if (err) throw err;
-							console.log("one document inserted to alarm db ", account);
-						  
-						db.close();
-					});
-					}
-				}
-				db.close();//all continue case;
+			if(err) throw err;
+			insertAlarm(result, account, block, data, type);
+			db.close();//all continue case;
 			}
 		});
 	}); 
