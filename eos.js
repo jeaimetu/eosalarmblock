@@ -76,7 +76,7 @@ function insertAlarm(res, account, block, data, type){
 				var fData = formatData(data, type);
 				//if(result[i] === undefined){
 					console.log("result is undefined", result[i], account);
-					continue;
+					//continue;
 				//}else{
 					console.log("calling insertone", account);
 					var myobj = { chatid : result[i].chatid, block : block, account : account, data : fData, report : false };
