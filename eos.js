@@ -77,21 +77,27 @@ function insertAlarm(res, account, block, data, type){
 			console.log("before enter for loop", result, result.length);
 			console.log("before enter for loop", result[0], result, account);
 			for(i=0 ; i < result.length ; i++){
-				console.log("for loop index : ", i);
-				console.log("after enter for loop", result[i], result, account,i);
+				const idx = i;
+				console.log("for loop index : ", idx);
+				console.log("after enter for loop", result[idx], result, account,idx);
 				let fData = formatData(data, type);
-				console.log("after calling formatData", result[i], result, account,i);
+				console.log("after calling formatData", result[idx], result, account,idx);
 				if(result[i] !== undefined){
-					console.log("calling insertone", account,result[i],i);
-					var myobj = { chatid : result[i].chatid, block : block, account : account, data : fData,
-						     report : false };
+					console.log("calling insertone", account,result[idx],idx);
+					var myobj = { chatid : result[idx].chatid, block : block, account : result[idx].eosid,
+						     data : fData, report : false };
 					dbo.collection("alarm").insertOne(myobj, function(err, res){
-						if (err) throw err;
-						console.log("one document inserted to alarm db ", account);
-						db.close();
+						if (err){ 
+							throw err;
+							console.log(err);
+							db.close();
+						}else{
+							console.log("one document inserted to alarm db ", account);
+							db.close();
+						}
 					});	
 				}else{
-					console.log("result is undefined", result, result[i], account, i);
+					console.log("result is undefined", result, result[idx], account, idx);
 					//continue;
 									
 				}
