@@ -5,7 +5,7 @@ var MongoClient = require('mongodb').MongoClient;
 var url = process.env.MONGODB_URI;
 
 const chainLogging = false;
-const runTimer = 400;
+const runTimer = 200;
 
 // EOS
 EosApi = require('eosjs-api')
