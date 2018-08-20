@@ -64,29 +64,31 @@ function getLatestBlock(){
 function insertAlarm(res, account, block, data, type){
 	let result = res.slice();
 	MongoClient.connect(url, function(err, db) {
-		if(result == null){
+		if(result.length == 0){
 			console.log("there is no matched one ", account);
 			db.close();
 			return;
 		}else{
 			var dbo = db.db("heroku_6wpccsrg");
-			console.log("before enter for loop", result);
+			console.log("before enter for loop", result, result.length);
 			console.log("before enter for loop", result[0], result, account);
 			for(i = 0;i < result.length;i++){
-				console.log("after enter for loop", result[0], result, account);
-				var fData = formatData(data, type);
-				console.log("after calling formatData", result[0], result, account);
-				if(result[i] === undefined){
-					console.log("result is undefined", result, result[i], account, i);
-					//continue;
-				}else{
-					console.log("calling insertone", account);
-					var myobj = { chatid : result[i].chatid, block : block, account : account, data : fData, report : false };
+				console.log("after enter for loop", result[i], result, account);
+				let fData = formatData(data, type);
+				console.log("after calling formatData", result[i], result, account);
+				if(result[i] !== undefined){
+					console.log("calling insertone", account,result[i],i);
+					var myobj = { chatid : result[i].chatid, block : block, account : account, data : fData,
+						     report : false };
 					dbo.collection("alarm").insertOne(myobj, function(err, res){
 						if (err) throw err;
 						console.log("one document inserted to alarm db ", account);
 						db.close();
-					});					
+					});	
+				}else{
+					console.log("result is undefined", result, result[i], account, i);
+					//continue;
+									
 				}
 			}
 					
