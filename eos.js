@@ -71,13 +71,15 @@ function insertAlarm(res, account, block, data, type){
 		}else{
 			var dbo = db.db("heroku_6wpccsrg");
 			console.log("before enter for loop", result);
-			console.log("before enter for loop", result[0], result);
+			console.log("before enter for loop", result[0], result, account);
 			for(i = 0;i < result.length;i++){
+				console.log("after enter for loop", result[0], result, account);
 				var fData = formatData(data, type);
-				//if(result[i] === undefined){
-					console.log("result is undefined", result[i], account);
+				console.log("after calling formatData", result[0], result, account);
+				if(result[i] === undefined){
+					console.log("result is undefined", result, result[i], account, i);
 					//continue;
-				//}else{
+				}else{
 					console.log("calling insertone", account);
 					var myobj = { chatid : result[i].chatid, block : block, account : account, data : fData, report : false };
 					dbo.collection("alarm").insertOne(myobj, function(err, res){
@@ -85,7 +87,7 @@ function insertAlarm(res, account, block, data, type){
 						console.log("one document inserted to alarm db ", account);
 						db.close();
 					});					
-				//}
+				}
 			}
 					
 		}
