@@ -4,7 +4,7 @@ var blockParse = require('./blockParse.js');
 var MongoClient = require('mongodb').MongoClient;
 var url = process.env.MONGODB_URI;
 
-const chainLogging = true;
+const chainLogging = false;
 const runTimer = 200;
 
 // EOS
@@ -77,23 +77,23 @@ function saveData(block, account, data, type){
 				  
 				db.close();
 			}else{
-				for(i = 0;i < result.length;i++){
+				//for(i = 0;i < result.length;i++){
 					//insert data
 					var fData = formatData(data, type);
 					//query all chat ids related to this
-					if(typeof  result[i] === 'undefined'){
-						console.log("result is undefined", result[i]);
+					if(typeof  result === 'undefined'){
+						console.log("result is undefined", result);
 						continue;
 					}
 					console.log("calling insertone", account);
-					var myobj = { chatid : result[i].chatid, block : block, account : account, data : fData, report : false };
+					var myobj = { chatid : result.chatid, block : block, account : account, data : fData, report : false };
 					dbo.collection("alarm").insertOne(myobj, function(err, res){
 						if (err) throw err;
 							console.log("one document inserted to alarm db ", account);
 						  
 						db.close();
 					});
-				}
+				//}
 				db.close();//all continue case;
 			}
 		});
