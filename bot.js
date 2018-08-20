@@ -261,11 +261,11 @@ else
 function loadData(ctx, cb){
  MongoClient.connect(url, function(err, db) {
  var dbo = db.db("heroku_9472rtd6");
- var findquery = {chatid : ctx.chat.id, primary : true};
+ var findquery = {chatid : ctx.from.id, primary : true};
  dbo.collection("customers").findOne(findquery, function(err, result){
   if(result == null){
    //if result is null, then return -1
-   var findqueryInTheLoop = {chatid : ctx.chat.id};
+   var findqueryInTheLoop = {chatid : ctx.from.id};
    dbo.collection("customers").findOne(findqueryInTheLoop, function(err, result){
     if(result == null){
    var msg = "Please set your primary account in setting menu";
@@ -316,11 +316,11 @@ function saveData(ctx){
     if (err) throw err;
     var dbo = db.db("heroku_9472rtd6");
  
-   var findquery = {chatid : ctx.chat.id, eosid : ctx.session.id, primary : true};
+   var findquery = {chatid : ctx.from.id, eosid : ctx.session.id, primary : true};
    dbo.collection("customers").findOne(findquery, function(err, result){
     if(result == null){
      //insert
-        var myobj = { chatid : ctx.chat.id, eosid : ctx.session.id, primary : true }
+        var myobj = { chatid : ctx.from.id, eosid : ctx.session.id, primary : true }
      dbo.collection("customers").insertOne(myobj, function(err, res) {
         if (err) throw err;
           console.log("1 document inserted");
@@ -344,11 +344,11 @@ function setPrimary(ctx, account){
     if (err) throw err;
     var dbo = db.db("heroku_9472rtd6");
  //, eosid : ctx.session.id, primary : true};
-   var updateQuery = {chatid : ctx.chat.id };
+   var updateQuery = {chatid : ctx.from.id };
    var newvalues = {$set : {primary : false}};
    dbo.collection("customers").updateMany(updateQuery, newvalues,function(err, res){
-    var findquery = {eosid : account};
-    var pValue = {$set : {primary : true }};
+    var findquery = {eosid : account, chatid : ctx.from.id};
+    var pValue = {$set : {primary : true, chatid : ctx.from.id}};
     dbo.collection("customers").updateOne(findquery, pValue, function(err, result){
      console.log("Primary flag update completed", ctx.session.id);
      msg = account;
@@ -366,7 +366,7 @@ function deleteAccount(ctx, account){
  MongoClient.connect(url, function(err, db) {
   if (err) throw err;
   var dbo = db.db("heroku_9472rtd6");
-  var deleteQuery = {eosid : account};
+  var deleteQuery = {eosid : account, chatid : ctx.session.id};
   dbo.collection("customers").deleteOne(deleteQuery, function(err, res){
    if(err) throw err;
    console.log("delete account", account);
