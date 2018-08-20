@@ -4,7 +4,7 @@ var blockParse = require('./blockParse.js');
 var MongoClient = require('mongodb').MongoClient;
 var url = process.env.MONGODB_URI;
 
-const chainLogging = true;
+const chainLogging = false;
 const runTimer = 400;
 
 // EOS
