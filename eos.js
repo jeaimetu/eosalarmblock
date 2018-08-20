@@ -83,7 +83,7 @@ function saveData(block, account, data, type){
 					var fData = formatData(data, type);
 					//query all chat ids related to this
 					if(typeof  result[i] === 'undefined'){
-						console.log("result is undefined", result[i], acount);
+						console.log("result is undefined", result[i], account);
 						continue;
 						db.close();
 
