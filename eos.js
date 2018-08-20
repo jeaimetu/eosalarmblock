@@ -102,7 +102,7 @@ function saveData(block, account, data, type){
 		var findquery = {eosid : account};
 		dbo.collection("customers").find(findquery).toArray(function(err, result){
 			if(err) throw err;
-			insertAlarm(result, account, block, data, type);
+			insertAlarm(result.slice(), account, block, data, type);
 			db.close();//all continue case;
 		});
 	}); 
