@@ -4,7 +4,7 @@ var blockParse = require('./blockParse.js');
 var MongoClient = require('mongodb').MongoClient;
 var url = process.env.MONGODB_URI;
 
-const chainLogging = false;
+const chainLogging = true;
 const runTimer = 200;
 
 // EOS
@@ -77,12 +77,13 @@ function saveData(block, account, data, type){
 				  
 				db.close();
 			}else{
+				console.log("before enter for loop", result);
 				for(i = 0;i < result.length;i++){
 					//insert data
 					var fData = formatData(data, type);
 					//query all chat ids related to this
 					if(typeof  result[i] === 'undefined'){
-						console.log("result is undefined", result[i]);
+						console.log("result is undefined", result[i], acount);
 						continue;
 						db.close();
 
