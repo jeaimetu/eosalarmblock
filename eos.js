@@ -82,7 +82,7 @@ function insertAlarm(res, account, block, data, type){
 				console.log("after enter for loop", result[idx], result, account,idx);
 				let fData = formatData(data, type);
 				console.log("after calling formatData", result[idx], result, account,idx);
-				if(result[i] !== undefined){
+				if(result[i] !== "undefined"){
 					console.log("calling insertone", account,result[idx],idx);
 					var myobj = { chatid : result[idx].chatid, block : block, account : result[idx].eosid,
 						     data : fData, report : false };
