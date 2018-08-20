@@ -70,10 +70,11 @@ function insertAlarm(result, account, block, data, type){
 		}else{
 			var dbo = db.db("heroku_6wpccsrg");
 			console.log("before enter for loop", result);
+			console.log("before enter for loop", result[0], result);
 			for(i = 0;i < result.length;i++){
 				var fData = formatData(data, type);
-				if(typeof  result === 'undefined'){
-					console.log("result is undefined", result, account);
+				if(typeof  result[i] === 'undefined'){
+					console.log("result is undefined", result[i], account);
 					continue;
 				}else{
 					console.log("calling insertone", account);
